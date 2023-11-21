@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_app/views/exercise/exercise_delete_modal.dart';
 import 'package:workout_model/workout_model.dart';
 
 class ExerciseView extends StatefulWidget {
@@ -65,33 +66,9 @@ class _ExerciseViewState extends State<ExerciseView> {
                       showDialog<void>(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Delete dialog'),
-                            content: const Text(
-                                'Press delete to confirm deletion of exercise'),
-                            actions: <Widget>[
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  textStyle:
-                                      Theme.of(context).textTheme.labelLarge,
-                                ),
-                                child: const Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              ElevatedButton(
-                                style: TextButton.styleFrom(
-                                  textStyle:
-                                      Theme.of(context).textTheme.labelLarge,
-                                ),
-                                child: const Text('Delete'),
-                                onPressed: () {
-                                  _deleteExercise(exercise.id);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                          return ExerciseDeleteModal(
+                            id: exercise.id,
+                            deleteExercise: _deleteExercise,
                           );
                         },
                       );
