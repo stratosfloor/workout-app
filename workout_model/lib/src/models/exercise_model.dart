@@ -10,22 +10,22 @@ class Exercise implements IExercise {
   @override
   final String description;
   @override
-  final int? repetitions;
+  final int repetitions;
   @override
   final int? restTime; // in seconds
   @override
-  final int? sets;
+  final int sets;
   @override
-  final double? weight;
+  final double weight;
 
   Exercise({
     String? id,
     required this.name,
     required this.description,
-    this.repetitions,
+    required this.repetitions,
     this.restTime,
-    this.sets,
-    this.weight,
+    required this.sets,
+    required this.weight,
   }) : id = id ?? const Uuid().v4();
 
   // to json

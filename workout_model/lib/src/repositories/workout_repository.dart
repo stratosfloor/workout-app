@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:workout_model/src/interfaces/workout_interface.dart';
 
+import '../models/exercise_model.dart';
 import '../models/workout_model.dart';
 
 class WorkoutRepository implements IWorkoutRepository<Workout> {
@@ -55,6 +56,7 @@ class WorkoutRepository implements IWorkoutRepository<Workout> {
     required Workout workout,
     String? name,
     String? description,
+    List<Exercise>? exercises,
     // TODO: add list of exercises here and add add/remove exercise as method in manager
   }) async {
     var existingWorkout = _workoutBox.get(workout.id);
@@ -64,6 +66,7 @@ class WorkoutRepository implements IWorkoutRepository<Workout> {
     final newWorkout = Workout(
       name: name ?? workout.name,
       description: description ?? workout.description,
+      exercises: exercises ?? workout.exercises,
     );
     _workoutBox.put(workout.id, newWorkout.serialize());
     return newWorkout;

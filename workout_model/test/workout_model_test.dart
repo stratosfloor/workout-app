@@ -144,9 +144,13 @@ void main() {
 
     test('Test delete', () async {
       await repo.create(Exercise(
-          id: 'test',
-          name: 'delete',
-          description: 'the doctor must be deleted'));
+        id: 'test',
+        name: 'delete',
+        description: 'the doctor must be deleted',
+        repetitions: 10,
+        weight: 10,
+        sets: 4,
+      ));
       expect(await repo.read('test'), isNotNull);
       expect(await repo.delete('test'), true);
       expect(await repo.read('test'), isNull);
