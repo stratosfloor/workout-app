@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_app/views/workout/workout_add_modal.dart';
 import 'package:workout_app/views/workout/workout_delete_modal.dart';
+import 'package:workout_app/views/workout/workout_detailed.dart';
 import 'package:workout_model/workout_model.dart';
 
 class WorkoutView extends StatefulWidget {
@@ -38,20 +39,39 @@ class _WorkoutViewState extends State<WorkoutView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: workoutFuture,
-        builder: (context, snapshot) {
-          final result = snapshot.data;
-
-          if (result != null) {
-            return Scaffold(
-              body: ListView.builder(
-                itemCount: result.length,
-                itemBuilder: (context, index) {
+      future: workoutFuture,
+      builder: (context, snapshot) {
+        final result = snapshot.data;
+        if (result != null) {
+          return Scaffold(
+            body: ListView.builder(
+              itemCount: result.length,
+              itemBuilder: (context, index) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('Empty'),
+                  );
+                } else {
                   final workout = result[index];
                   return ListTile(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              WorkoutDetailed(workout: workout),
+                        ),
+                      );
+                    },
                     // TODO: Open detailed workout view,
-                    //
+
                     title: Text(workout.name),
                     subtitle: Text(workout.description),
                     tileColor: index % 2 == 0
@@ -72,33 +92,32 @@ class _WorkoutViewState extends State<WorkoutView> {
                       },
                     ),
                   );
-                },
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  showModalBottomSheet<void>(
-                    useSafeArea: true,
-                    isScrollControlled: true,
-                    context: context,
-                    constraints:
-                        const BoxConstraints(maxWidth: double.infinity),
-                    builder: (BuildContext context) {
-                      return WorkoutAddModal(
-                        createWorkout: createWorkout,
-                      );
-                    },
-                  );
-                },
-                child: const Icon(Icons.add),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error'),
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+                }
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                showModalBottomSheet<void>(
+                  useSafeArea: true,
+                  isScrollControlled: true,
+                  context: context,
+                  constraints: const BoxConstraints(maxWidth: double.infinity),
+                  builder: (BuildContext context) {
+                    return WorkoutAddModal(
+                      createWorkout: createWorkout,
+                    );
+                  },
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+          );
+        } else {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+      },
+    );
   }
 }
