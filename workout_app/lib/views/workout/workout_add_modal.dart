@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:workout_model/workout_model.dart';
 
+// TODO: Change to textformfield
+// witih validaiton
+
 class WorkoutAddModal extends StatelessWidget {
   WorkoutAddModal({
     super.key,
