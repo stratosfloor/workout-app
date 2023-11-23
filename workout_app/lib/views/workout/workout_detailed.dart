@@ -15,34 +15,34 @@ class WorkoutDetailed extends StatefulWidget {
 }
 
 class _WorkoutDetailedState extends State<WorkoutDetailed> {
-  bool workoutStatus = false;
+  late List<Exercise> exerciseList;
+
+  void addExerciseToWorkout() async {
+    final exercise = await Navigator.of(context).push<Exercise>(
+      MaterialPageRoute(
+        builder: (ctx) => WorkoutAddExercise(),
+      ),
+    );
+    if (exercise == null) {
+      return;
+    }
+
+    setState(() {
+      exerciseList.add(exercise);
+      WorkoutRepository.instance
+          .update(workout: widget.workout, exercises: exerciseList);
+    });
+  }
+
+  void removeExerciseFromWorkout({required Exercise exercise}) async {
+    exerciseList.remove(exercise);
+    WorkoutRepository.instance
+        .update(workout: widget.workout, exercises: exerciseList);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final exerciseList = widget.workout.exercises;
-
-    void addExerciseToWorkout() async {
-      final exercise = await Navigator.of(context).push<Exercise>(
-        MaterialPageRoute(
-          builder: (ctx) => WorkoutAddExercise(),
-        ),
-      );
-      if (exercise == null) {
-        return;
-      }
-
-      setState(() {
-        exerciseList.add(exercise);
-        WorkoutRepository.instance
-            .update(workout: widget.workout, exercises: exerciseList);
-      });
-    }
-
-    void removeExerciseFromWorkout({required Exercise exercise}) async {
-      exerciseList.remove(exercise);
-      WorkoutRepository.instance
-          .update(workout: widget.workout, exercises: exerciseList);
-    }
+    exerciseList = widget.workout.exercises;
 
     return Hero(
       tag: widget.workout.name,
@@ -62,10 +62,6 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                   itemCount: widget.workout.exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = widget.workout.exercises[index];
-                    // Change to card or something better to show all info
-                    //
-                    // Dissmissable?
-                    // How should list look like?
                     return Dismissible(
                       onDismissed: (direction) {
                         removeExerciseFromWorkout(exercise: exercise);
