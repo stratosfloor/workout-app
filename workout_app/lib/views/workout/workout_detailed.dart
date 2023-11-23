@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:workout_app/views/workout/workout_add_exercise.dart';
 import 'package:workout_model/workout_model.dart';
 
+enum WorkoutStatus { notStarted, started, paused, finished }
+
 class WorkoutDetailed extends StatefulWidget {
   const WorkoutDetailed({
     super.key,
@@ -35,7 +37,30 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
   }
 
   void removeExerciseFromWorkout({required Exercise exercise}) async {
-    exerciseList.remove(exercise);
+    final index = exerciseList.indexOf(exercise);
+
+    setState(() {
+      exerciseList.remove(exercise);
+    });
+
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text('Item removed'),
+        action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              setState(() {
+                exerciseList.insert(index, exercise);
+                return;
+              });
+            }),
+      ),
+    );
     WorkoutRepository.instance
         .update(workout: widget.workout, exercises: exerciseList);
   }
@@ -44,88 +69,86 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
   Widget build(BuildContext context) {
     exerciseList = widget.workout.exercises;
 
-    return Hero(
-      tag: widget.workout.name,
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.workout.name),
-            actions: [
-              IconButton(
-                onPressed: addExerciseToWorkout,
-                icon: const Icon(Icons.add),
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.workout.name),
+        actions: [
+          IconButton(
+            onPressed: addExerciseToWorkout,
+            icon: const Icon(Icons.add),
           ),
-          body: widget.workout.exercises.isEmpty
-              ? const Center(child: Text('Empty'))
-              : ListView.builder(
-                  itemCount: widget.workout.exercises.length,
-                  itemBuilder: (context, index) {
-                    final exercise = widget.workout.exercises[index];
-                    return Dismissible(
-                      onDismissed: (direction) {
-                        removeExerciseFromWorkout(exercise: exercise);
-                      },
-                      background: Container(
-                        color: Colors.grey[200],
-                      ),
-                      key: ValueKey<int>(index),
-                      child: Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ],
+      ),
+      body: widget.workout.exercises.isEmpty
+          ? const Center(child: Text('Empty'))
+          : ListView.builder(
+              itemCount: widget.workout.exercises.length,
+              itemBuilder: (context, index) {
+                final exercise = widget.workout.exercises[index];
+                return Dismissible(
+                  key: UniqueKey(),
+                  onDismissed: (direction) {
+                    removeExerciseFromWorkout(exercise: exercise);
+                  },
+                  background: Card(
+                    color: Colors.red[50],
+                  ),
+                  child: Card(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                Text(exercise.name),
-                                Text(exercise.description),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text('Weight: ${exercise.weight}'),
-                                Text('Reps: ${exercise.repetitions}'),
-                                Text('Sets: ${exercise.sets}'),
-                              ],
-                            )
+                            Text(exercise.name),
+                            Text(exercise.description),
                           ],
                         ),
-                      ),
-                    );
-                  },
-                ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // TODO: Stop workout
-                      //
-                    },
-                    child: const Icon(Icons.stop),
+                        Column(
+                          children: [
+                            Text('Weight: ${exercise.weight}'),
+                            Text('Reps: ${exercise.repetitions}'),
+                            Text('Sets: ${exercise.sets}'),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                  FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // TODO: start/resume workout
-                      //
-                    },
-                    child: const Icon(Icons.play_arrow),
-                  ),
-                  FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // TODO: pause workout
-                      //
-                    },
-                    child: const Icon(Icons.pause),
-                  ),
-                ],
-              ))),
+                );
+              },
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                // TODO: Stop workout
+                //
+              },
+              child: const Icon(Icons.stop),
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                // TODO: start/resume workout
+                //
+              },
+              child: const Icon(Icons.play_arrow),
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                // TODO: pause workout
+                //
+              },
+              child: const Icon(Icons.pause),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
