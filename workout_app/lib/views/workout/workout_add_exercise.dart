@@ -9,38 +9,13 @@ class WorkoutAddExercise extends StatelessWidget {
       ExerciseDescriptionRepository.instance.list();
 
   final _formKey = GlobalKey<FormState>();
-  final _weightController = TextEditingController();
-  final _repController = TextEditingController();
-  final _setController = TextEditingController();
-
-  double weight = 10;
-  int repetitions = 10;
-  int sets = 3;
-
-  void addExerciseToWorkout({
-    required String name,
-    required String description,
-    required double weight,
-    required int repetitions,
-    required int sets,
-  }) {
-    if (_formKey.currentState!.validate()) {
-      final exercise = Exercise(
-        name: name,
-        description: description,
-        weight: weight,
-        repetitions: repetitions,
-        sets: sets,
-      );
-
-      print(exercise);
-
-      // TODO: Poppa exercise
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    double weight = 10;
+    int repetitions = 10;
+    int sets = 3;
+
     return FutureBuilder(
       future: exerciseDescriptionFuture,
       builder: ((context, snapshot) {
@@ -86,8 +61,9 @@ class WorkoutAddExercise extends StatelessWidget {
                                   if (value == null ||
                                       value.isEmpty ||
                                       value.trim().length > 5 ||
-                                      double.parse(value) < 1 ||
-                                      double.parse(value) > 1000) {
+                                      double.tryParse(value) == null ||
+                                      double.tryParse(value)! < 1 ||
+                                      double.tryParse(value)! > 1000) {
                                     return 'Insert valid number';
                                   }
                                   return null;
@@ -113,8 +89,9 @@ class WorkoutAddExercise extends StatelessWidget {
                                   if (value == null ||
                                       value.isEmpty ||
                                       value.trim().length > 3 ||
-                                      int.parse(value) < 1 ||
-                                      int.parse(value) > 100) {
+                                      int.tryParse(value) == null ||
+                                      int.tryParse(value)! < 1 ||
+                                      int.tryParse(value)! > 100) {
                                     return 'Insert valid number';
                                   }
                                   return null;
@@ -145,8 +122,9 @@ class WorkoutAddExercise extends StatelessWidget {
                                   if (value == null ||
                                       value.isEmpty ||
                                       value.trim().length > 3 ||
-                                      int.parse(value) < 1 ||
-                                      int.parse(value) > 50) {
+                                      int.tryParse(value) == null ||
+                                      int.tryParse(value)! < 1 ||
+                                      int.tryParse(value)! > 50) {
                                     return 'Insert valid number';
                                   }
                                   return null;
