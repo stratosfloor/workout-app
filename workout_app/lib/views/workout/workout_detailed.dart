@@ -38,6 +38,12 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
       });
     }
 
+    void removeExerciseFromWorkout({required Exercise exercise}) async {
+      exerciseList.remove(exercise);
+      WorkoutRepository.instance
+          .update(workout: widget.workout, exercises: exerciseList);
+    }
+
     return Hero(
       tag: widget.workout.name,
       child: Scaffold(
@@ -61,6 +67,9 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                     // Dissmissable?
                     // How should list look like?
                     return Dismissible(
+                      onDismissed: (direction) {
+                        removeExerciseFromWorkout(exercise: exercise);
+                      },
                       background: Container(
                         color: Colors.grey[200],
                       ),
