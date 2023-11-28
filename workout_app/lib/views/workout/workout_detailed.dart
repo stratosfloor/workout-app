@@ -123,6 +123,10 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                 final exercise = widget.workout.exercises[index];
                 return Dismissible(
                   key: UniqueKey(),
+                  // Cant dismiss exercise uncless not started workout
+                  direction: status == WorkoutStatus.notStarted
+                      ? DismissDirection.horizontal
+                      : DismissDirection.none,
                   onDismissed: (direction) {
                     removeExerciseFromWorkout(exercise: exercise);
                   },
