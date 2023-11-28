@@ -3,7 +3,7 @@ import 'exercise_interface.dart';
 enum WorkoutStatus {
   notStarted,
   paused,
-  ongoing,
+  started,
   completed,
 }
 

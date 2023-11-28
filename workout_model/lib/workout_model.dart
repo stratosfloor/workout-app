@@ -3,6 +3,8 @@
 /// More dartdocs go here.
 library;
 
+export 'src/interfaces/workout_interface.dart';
+
 export 'src/models/exercise_model.dart';
 export 'src/models/exercise_description_model.dart';
 export 'src/models/workout_model.dart';

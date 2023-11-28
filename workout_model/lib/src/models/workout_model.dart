@@ -25,7 +25,7 @@ class Workout implements IWorkout {
     WorkoutStatus? status,
   })  : id = id ?? const Uuid().v4(),
         exercises = exercises ?? [],
-        status = WorkoutStatus.notStarted;
+        status = status ?? WorkoutStatus.notStarted;
 
   Map<String, dynamic> toJson() => {
         'id': id,

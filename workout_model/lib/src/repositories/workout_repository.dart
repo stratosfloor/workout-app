@@ -57,6 +57,7 @@ class WorkoutRepository implements IWorkoutRepository<Workout> {
     String? name,
     String? description,
     List<Exercise>? exercises,
+    WorkoutStatus? status,
     // TODO: add list of exercises here and add add/remove exercise as method in manager
   }) async {
     var existingWorkout = _workoutBox.get(workout.id);
@@ -64,11 +65,33 @@ class WorkoutRepository implements IWorkoutRepository<Workout> {
       throw Exception('Workout not found');
     }
     final newWorkout = Workout(
+      id: workout.id,
       name: name ?? workout.name,
       description: description ?? workout.description,
       exercises: exercises ?? workout.exercises,
+      status: status ?? workout.status,
     );
     _workoutBox.put(workout.id, newWorkout.serialize());
+    return newWorkout;
+  }
+
+  Future<Workout> updateStatus({
+    required Workout workout,
+    required WorkoutStatus status,
+  }) async {
+    var existingWorkout = _workoutBox.get(workout.id);
+    if (existingWorkout == null) {
+      throw Exception('Workout not found');
+    }
+
+    final newWorkout = Workout(
+      id: workout.id,
+      name: workout.name,
+      description: workout.description,
+      exercises: workout.exercises,
+      status: status,
+    );
+    await _workoutBox.put(workout.id, newWorkout.serialize());
     return newWorkout;
   }
 
