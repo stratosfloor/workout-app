@@ -14,20 +14,25 @@ class Workout implements IWorkout {
   String description;
   @override
   List<Exercise> exercises;
+  @override
+  WorkoutStatus status;
 
   Workout({
     String? id,
     required this.name,
     required this.description,
     List<Exercise>? exercises,
+    WorkoutStatus? status,
   })  : id = id ?? const Uuid().v4(),
-        exercises = exercises ?? [];
+        exercises = exercises ?? [],
+        status = WorkoutStatus.notStarted;
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'description': description,
         'exercises': exercises,
+        'status': status.index,
       };
 
   factory Workout.fromJson(Map<String, dynamic> json) {
@@ -38,6 +43,7 @@ class Workout implements IWorkout {
       exercises: (json['exercises'] as List)
           .map((json) => Exercise.fromJson(json))
           .toList(),
+      status: WorkoutStatus.values[json['status'] as int],
     );
   }
 

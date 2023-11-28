@@ -1,9 +1,10 @@
 import 'exercise_interface.dart';
 
 enum WorkoutStatus {
-  finished,
+  notStarted,
+  paused,
   ongoing,
-  future,
+  completed,
 }
 
 sealed class Identifiable {
@@ -14,6 +15,7 @@ abstract interface class IWorkout<T extends IExercise> extends Identifiable {
   String get name;
   String get description;
   List<T> get exercises;
+  WorkoutStatus get status;
 }
 
 abstract interface class IWorkoutRepository<T extends IWorkout> {

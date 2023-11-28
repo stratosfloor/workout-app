@@ -42,13 +42,13 @@ class Exercise implements IExercise {
   // from json
   factory Exercise.fromJson(Map<String, dynamic> json) {
     return Exercise(
-      name: json['name'],
-      id: json['id'],
-      description: json['description'],
-      repetitions: json['repetitions'],
-      restTime: json['restTime'],
-      sets: json['sets'],
-      weight: json['weight'],
+      name: json['name'] as String,
+      id: json['id'] as String,
+      description: json['description'] as String,
+      repetitions: json['repetitions'] ?? 0,
+      restTime: json['restTime'] ?? 0,
+      sets: json['sets'] ?? 0,
+      weight: json['weight'] ?? 0,
     );
   }
 
