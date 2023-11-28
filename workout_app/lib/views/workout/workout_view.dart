@@ -4,6 +4,8 @@ import 'package:workout_app/views/workout/workout_delete_modal.dart';
 import 'package:workout_app/views/workout/workout_detailed.dart';
 import 'package:workout_model/workout_model.dart';
 
+// TODO: Add some filtering or something completed, not started... workouts
+
 class WorkoutView extends StatefulWidget {
   const WorkoutView({super.key});
 
@@ -60,36 +62,43 @@ class _WorkoutViewState extends State<WorkoutView> {
                   );
                 } else {
                   final workout = result[index];
-                  return ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              WorkoutDetailed(workout: workout),
-                        ),
-                      );
-                    },
-                    // TODO: Open detailed workout view,
-
-                    title: Text(workout.name),
-                    subtitle: Text(workout.description),
-                    tileColor: index % 2 == 0
-                        ? Theme.of(context).colorScheme.onTertiary
-                        : Theme.of(context).colorScheme.onInverseSurface,
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return WorkoutDeleteModal(
-                              id: workout.id,
-                              deleteWorkout: deleteWorkout,
-                            );
-                          },
+                  return Container(
+                    decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide())),
+                    child: ListTile(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                WorkoutDetailed(workout: workout),
+                          ),
                         );
+                        updateList();
                       },
+                      title: Text(workout.name),
+                      subtitle: Text(workout.status.name.toString()),
+                      tileColor: workout.status == WorkoutStatus.completed
+                          ? Colors.green[200]
+                          : workout.status == WorkoutStatus.paused
+                              ? Colors.amber[200]
+                              : workout.status == WorkoutStatus.notStarted
+                                  ? Colors.orange[200]
+                                  : Colors.yellow[200],
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return WorkoutDeleteModal(
+                                id: workout.id,
+                                deleteWorkout: deleteWorkout,
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   );
                 }
