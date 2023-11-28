@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:workout_app/views/workout/workout_add_exercise.dart';
 import 'package:workout_model/workout_model.dart';
 
-enum WorkoutStatus { notStarted, started, paused, finished }
-
 class WorkoutDetailed extends StatefulWidget {
-  const WorkoutDetailed({
+  WorkoutDetailed({
     super.key,
     required this.workout,
   });
 
-  final Workout workout;
+  Workout workout;
 
   @override
   State<WorkoutDetailed> createState() => _WorkoutDetailedState();
@@ -18,6 +16,7 @@ class WorkoutDetailed extends StatefulWidget {
 
 class _WorkoutDetailedState extends State<WorkoutDetailed> {
   late List<Exercise> exerciseList;
+  late WorkoutStatus status;
 
   void addExerciseToWorkout() async {
     final exercise = await Navigator.of(context).push<Exercise>(
@@ -28,7 +27,6 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
     if (exercise == null) {
       return;
     }
-
     setState(() {
       exerciseList.add(exercise);
       WorkoutRepository.instance
@@ -65,16 +63,54 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
         .update(workout: widget.workout, exercises: exerciseList);
   }
 
+  void startWorkout() async {
+    setState(() {
+      status = WorkoutStatus.started;
+    });
+    widget.workout = await WorkoutRepository.instance
+        .updateStatus(workout: widget.workout, status: WorkoutStatus.started);
+  }
+
+  void pausWorkout() async {
+    setState(() {
+      status = WorkoutStatus.paused;
+    });
+    widget.workout = await WorkoutRepository.instance
+        .updateStatus(workout: widget.workout, status: WorkoutStatus.paused);
+  }
+
+  void resetWorkout() async {
+    setState(() {
+      status = WorkoutStatus.notStarted;
+    });
+    widget.workout = await WorkoutRepository.instance.updateStatus(
+        workout: widget.workout, status: WorkoutStatus.notStarted);
+  }
+
+  void completeWorkout() async {
+    setState(() {
+      status = WorkoutStatus.completed;
+    });
+    widget.workout = await WorkoutRepository.instance
+        .updateStatus(workout: widget.workout, status: WorkoutStatus.completed);
+  }
+
   @override
   Widget build(BuildContext context) {
     exerciseList = widget.workout.exercises;
+    status = widget.workout.status;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.workout.name),
+        title: Column(children: [
+          Text(widget.workout.name),
+          Text(status.toString(), style: const TextStyle(fontSize: 10)),
+        ]),
         actions: [
           IconButton(
-            onPressed: addExerciseToWorkout,
+            onPressed: status == WorkoutStatus.notStarted
+                ? addExerciseToWorkout
+                : null,
             icon: const Icon(Icons.add),
           ),
         ],
@@ -122,29 +158,48 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
+            // STOP // RESTART WORKOUT
             FloatingActionButton(
               heroTag: null,
-              onPressed: () {
-                // TODO: Stop workout
-                //
-              },
-              child: const Icon(Icons.stop),
+              onPressed: status == WorkoutStatus.started ||
+                      status == WorkoutStatus.paused
+                  ? resetWorkout
+                  : null,
+              child: const Icon(Icons.restart_alt),
             ),
+
+            // START // RESUME WORKOUT
             FloatingActionButton(
               heroTag: null,
-              onPressed: () {
-                // TODO: start/resume workout
-                //
-              },
-              child: const Icon(Icons.play_arrow),
+              onPressed: status == WorkoutStatus.notStarted ||
+                      status == WorkoutStatus.paused
+                  ? startWorkout
+                  : null,
+              // TODO: start/resume workout
+              //
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.black26,
+              ),
             ),
+
+            // PAUSE WORKOUT
             FloatingActionButton(
               heroTag: null,
-              onPressed: () {
-                // TODO: pause workout
-                //
-              },
+              onPressed: status == WorkoutStatus.started ? pausWorkout : null,
+              // TODO: pause workout
+              //
               child: const Icon(Icons.pause),
+            ),
+
+            // COMPLETE WORKOUT
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: status == WorkoutStatus.started ||
+                      status == WorkoutStatus.paused
+                  ? completeWorkout
+                  : null,
+              child: const Icon(Icons.done),
             ),
           ],
         ),
