@@ -28,7 +28,7 @@ class Exercise implements IExercise {
     this.restTime,
     required this.sets,
     required this.weight,
-    double? performence,
+    this.performence,
   }) : id = id ?? const Uuid().v4();
 
   // to json
@@ -53,7 +53,7 @@ class Exercise implements IExercise {
       restTime: json['restTime'] ?? 0,
       sets: json['sets'] ?? 0,
       weight: json['weight'] ?? 0,
-      performence: json['performence'] ?? 0,
+      performence: json['performence'],
     );
   }
 

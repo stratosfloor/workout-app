@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:workout_app/views/workout/workout_add_exercise.dart';
+import 'package:workout_app/views/workout/workout_set_performence.dart';
 import 'package:workout_model/workout_model.dart';
 
 class WorkoutDetailed extends StatefulWidget {
@@ -95,6 +98,29 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
         .updateStatus(workout: widget.workout, status: WorkoutStatus.completed);
   }
 
+  void setPerformence(Exercise exercise) async {
+    final index = exerciseList.indexOf(exercise);
+
+    final performence = await Navigator.of(context).push<double>(
+      MaterialPageRoute(
+        builder: (ctx) => WorkoutSetPetformenceModal(exercise: exercise),
+      ),
+    );
+
+    if (performence != null) {
+      print(performence);
+    }
+
+    exercise.performence = performence;
+
+    setState(() {
+      exerciseList.remove(exercise);
+      exerciseList.insert(index, exercise);
+      WorkoutRepository.instance
+          .update(workout: widget.workout, exercises: exerciseList);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     exerciseList = widget.workout.exercises;
@@ -133,24 +159,41 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                   background: Card(
                     color: Colors.red[50],
                   ),
-                  child: Card(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Text(exercise.name),
-                            Text(exercise.description),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('Weight: ${exercise.weight}'),
-                            Text('Reps: ${exercise.repetitions}'),
-                            Text('Sets: ${exercise.sets}'),
-                          ],
-                        )
-                      ],
+                  child: GestureDetector(
+                    onTap: () {
+                      status != WorkoutStatus.started
+                          ? null
+                          : setPerformence(exercise);
+                    },
+                    child: Card(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(exercise.name),
+                                  Text(exercise.description),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text('Weight: ${exercise.weight}'),
+                                  Text('Reps: ${exercise.repetitions}'),
+                                  Text('Sets: ${exercise.sets}'),
+                                ],
+                              )
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                  'Performence: ${exercise.performence ?? ''} %'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
