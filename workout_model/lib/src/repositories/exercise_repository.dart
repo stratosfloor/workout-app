@@ -57,6 +57,7 @@ class ExerciseRepository implements IExceriseRepository<Exercise> {
     int? restTime,
     int? sets,
     double? weight,
+    double? performence,
   }) async {
     var existingExercise = await _exerciseBox.get(exercise.id);
     if (existingExercise == null) {
@@ -69,6 +70,7 @@ class ExerciseRepository implements IExceriseRepository<Exercise> {
       restTime: restTime ?? exercise.restTime,
       sets: sets ?? exercise.sets,
       weight: weight ?? exercise.weight,
+      performence: performence ?? exercise.performence,
     );
     await _exerciseBox.put(exercise.id, newExercise.serialize());
     return newExercise;

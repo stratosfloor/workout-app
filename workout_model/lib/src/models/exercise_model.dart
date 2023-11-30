@@ -18,6 +18,8 @@ class Exercise implements IExercise {
   @override
   final double weight;
 
+  double? performence;
+
   Exercise({
     String? id,
     required this.name,
@@ -26,6 +28,7 @@ class Exercise implements IExercise {
     this.restTime,
     required this.sets,
     required this.weight,
+    double? performence,
   }) : id = id ?? const Uuid().v4();
 
   // to json
@@ -37,6 +40,7 @@ class Exercise implements IExercise {
         'restTime': restTime,
         'sets': sets,
         'weight': weight,
+        'performence': performence,
       };
 
   // from json
@@ -49,6 +53,7 @@ class Exercise implements IExercise {
       restTime: json['restTime'] ?? 0,
       sets: json['sets'] ?? 0,
       weight: json['weight'] ?? 0,
+      performence: json['performence'] ?? 0,
     );
   }
 
