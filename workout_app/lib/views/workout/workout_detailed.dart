@@ -91,6 +91,20 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
   }
 
   void completeWorkout() async {
+    for (var i = 0; i < exerciseList.length; i++) {
+      if (exerciseList[i].performence == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => const AlertDialog(
+            title: Text(
+              'You must set performence of all exercises to complete workout',
+            ),
+          ),
+        );
+        return;
+      }
+    }
+
     setState(() {
       status = WorkoutStatus.completed;
     });
@@ -128,17 +142,37 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(children: [
-          Text(widget.workout.name),
-          Text(status.toString(), style: const TextStyle(fontSize: 10)),
-        ]),
+        title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(widget.workout.name),
+              Expanded(
+                child: Center(
+                    child: Text(status.toString(),
+                        style: const TextStyle(fontSize: 10))),
+              ),
+            ]),
         actions: [
-          IconButton(
-            onPressed: status == WorkoutStatus.notStarted
-                ? addExerciseToWorkout
-                : null,
-            icon: const Icon(Icons.add),
-          ),
+          status == WorkoutStatus.notStarted
+              ? IconButton(
+                  onPressed: addExerciseToWorkout,
+                  icon: Icon(
+                    Icons.add_box,
+                    color: Theme.of(context).colorScheme.primary,
+                    grade: 20,
+                    size: 32,
+                  ),
+                )
+              : IconButton(
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.add_box,
+                    color: Theme.of(context).colorScheme.secondary,
+                    grade: 10,
+                    size: 20,
+                  ),
+                )
         ],
       ),
       body: widget.workout.exercises.isEmpty
@@ -212,7 +246,13 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                       status == WorkoutStatus.paused
                   ? resetWorkout
                   : null,
-              child: const Icon(Icons.restart_alt),
+              child: Icon(
+                Icons.restart_alt,
+                color: status == WorkoutStatus.started ||
+                        status == WorkoutStatus.paused
+                    ? Colors.black87
+                    : Colors.black12,
+              ),
             ),
 
             // START // RESUME WORKOUT
@@ -222,11 +262,12 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                       status == WorkoutStatus.paused
                   ? startWorkout
                   : null,
-              // TODO: start/resume workout
-              //
-              child: const Icon(
+              child: Icon(
                 Icons.play_arrow,
-                color: Colors.black26,
+                color: status == WorkoutStatus.notStarted ||
+                        status == WorkoutStatus.paused
+                    ? Colors.black87
+                    : Colors.black12,
               ),
             ),
 
@@ -234,9 +275,11 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
             FloatingActionButton(
               heroTag: null,
               onPressed: status == WorkoutStatus.started ? pausWorkout : null,
-              // TODO: pause workout
               //
-              child: const Icon(Icons.pause),
+              child: Icon(Icons.pause,
+                  color: status == WorkoutStatus.started
+                      ? Colors.black87
+                      : Colors.black12),
             ),
 
             // COMPLETE WORKOUT
@@ -246,7 +289,11 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                       status == WorkoutStatus.paused
                   ? completeWorkout
                   : null,
-              child: const Icon(Icons.done),
+              child: Icon(Icons.done,
+                  color: status == WorkoutStatus.started ||
+                          status == WorkoutStatus.paused
+                      ? Colors.black87
+                      : Colors.black12),
             ),
           ],
         ),
