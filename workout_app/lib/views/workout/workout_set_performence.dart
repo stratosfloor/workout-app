@@ -21,11 +21,12 @@ class _WorkoutSetPetformenceModalState
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Fix this
     var performence =
         List<int>.filled(widget.exercise.sets, widget.exercise.repetitions);
 
     double calculatePerformence() {
-      double per = 100;
+      double per = 1;
       for (var i = 0; i < widget.exercise.sets; i++) {
         per = per * (performence[i] / widget.exercise.repetitions);
       }
@@ -41,6 +42,7 @@ class _WorkoutSetPetformenceModalState
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             for (var i = 0; i < widget.exercise.sets; i++)
+              // TODO: numberpicker to pop performence
               NumberPicker(
                 index: i,
                 exercise: widget.exercise,

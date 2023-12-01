@@ -12,12 +12,15 @@ class _PerformenceViewState extends State<PerformenceView> {
   var workoutFuture = WorkoutRepository.instance.list();
 
   String totalPerformence(Workout workout) {
-    double performence = 1;
-    for (var i = 0; i < workout.exercises.length; i++) {
-      var per = workout.exercises[i].performence as double;
-      performence *= per / 100;
+    double val = workout.exercises[0].performence!;
+    if (workout.exercises.length == 1) {
+      return (val * 100).toString();
+    } else {
+      for (var i = 1; i < workout.exercises.length; i++) {
+        val += workout.exercises[i].performence!;
+      }
+      return ((val * 100) / workout.exercises.length).toString();
     }
-    return (performence * 100).toString();
   }
 
   @override

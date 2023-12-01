@@ -135,6 +135,10 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
     });
   }
 
+  double getPerformence(Exercise exercise) {
+    return exercise.performence! * 100;
+  }
+
   @override
   Widget build(BuildContext context) {
     exerciseList = widget.workout.exercises;
@@ -222,8 +226,9 @@ class _WorkoutDetailedState extends State<WorkoutDetailed> {
                           ),
                           Column(
                             children: [
-                              Text(
-                                  'Performence: ${exercise.performence ?? ''} %'),
+                              Text(exercise.performence != null
+                                  ? 'Performence: ${getPerformence(exercise)} %'
+                                  : ''),
                             ],
                           ),
                         ],
