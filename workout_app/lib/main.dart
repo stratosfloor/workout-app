@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:workout_app/views/exercise/exercise_view.dart';
+import 'package:workout_app/views/performence/performence_view.dart';
 import 'package:workout_app/views/workout/workout_view.dart';
 import 'package:workout_model/workout_model.dart';
 
@@ -40,7 +41,11 @@ class WorkoutApp extends StatefulWidget {
 class _WorkoutAppState extends State<WorkoutApp> {
   int currentPageIndex = 0;
 
-  final List<Widget> views = const [ExerciseView(), WorkoutView()];
+  final List<Widget> views = const [
+    ExerciseView(),
+    WorkoutView(),
+    PerformenceView()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +60,7 @@ class _WorkoutAppState extends State<WorkoutApp> {
               icon: Icon(Icons.sports_gymnastics), label: 'Exercise'),
           NavigationDestination(
               icon: Icon(Icons.fitness_center), label: 'Workout'),
+          NavigationDestination(icon: Icon(Icons.bolt), label: 'Performence'),
         ],
       ),
       body: views[currentPageIndex],
